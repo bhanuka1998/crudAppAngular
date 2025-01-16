@@ -34,8 +34,11 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable Long id, @RequestBody Product product){
-        product.setProductId(id);
-        return productRepository.save(product);
+        return productRepository.findById(id).map(updatedProduct -> {
+            updatedProduct.setProductName(product.getProductName());
+            updatedProduct.setProductPrice(product.getProductPrice());
+            return productRepository.save(updatedProduct);
+        }).orElseThrow(() -> new RuntimeException("Item Not Found"));
     }
 
     @DeleteMapping("/{id}")
